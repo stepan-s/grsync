@@ -19,6 +19,8 @@ type Rsync struct {
 
 // RsyncOptions for rsync
 type RsyncOptions struct {
+	// CommandPath rsync path
+	CommandPath string
 	// Verbose increase verbosity
 	Verbose bool
 	// Quet suppress non-error messages
@@ -223,10 +225,16 @@ func (r Rsync) Run() error {
 // NewRsync returns task with described options
 func NewRsync(source, destination string, options RsyncOptions) *Rsync {
 	arguments := append(getArguments(options), source, destination)
+	var name string
+	if options.CommandPath != "" {
+		name = options.CommandPath
+	} else {
+		name = "rsync"
+	}
 	return &Rsync{
 		Source:      source,
 		Destination: destination,
-		cmd:         exec.Command("rsync", arguments...),
+		cmd:         exec.Command(name, arguments...),
 	}
 }
 
